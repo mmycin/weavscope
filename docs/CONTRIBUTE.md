@@ -4,11 +4,11 @@ First off, thank you for considering contributing to WeavScope! It's people like
 
 ### 1. Where do I go from here?
 
-If you've noticed a bug or have a feature request, make sure to check our [Issues](https://github.com/mmycin/inframan/issues) to see if it has already been reported. If not, feel free to open a new one!
+If you've noticed a bug or have a feature request, make sure to check our [Issues](https://github.com/mmycin/weavscope/issues) to see if it has already been reported. If not, feel free to open a new one!
 
 ### 2. Fork & create a branch
 
-If this is something you think you can fix, then fork the repository at `github.com/mmycin/inframan` and create a branch with a descriptive name.
+If this is something you think you can fix, then fork the repository at `github.com/mmycin/weavscope` and create a branch with a descriptive name.
 
 ### 3. Get the test suite running
 
