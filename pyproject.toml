@@ -1,9 +1,26 @@
 [project]
 name = "weavscope"
 version = "0.1.0"
-description = "Add your description here"
+description = "A clean, multi-tenant Weaviate wrapper for isolated data management."
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
+authors = [
+    { name = "Tahcin Ul Karim (Mycin)", email = "mycin.mit@gmail.com" }
+]
+keywords = ["weaviate", "vector-database", "multi-tenancy", "search"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
 dependencies = [
     "weaviate-client[agents]>=4.20.4",
 ]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=9.0.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
