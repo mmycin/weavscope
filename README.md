@@ -72,6 +72,10 @@ with WeavScope(config) as scope:
     )
 ```
 
+## AI/LLM Documentation
+
+For AI coding assistants and LLMs looking for an in-depth technical overview of WeavScope's architecture and API, please refer to [LLM.txt](LLM.txt).
+
 ## License
 
 MIT - Copyright (c) 2026 Tahcin Ul Karim (Mycin)

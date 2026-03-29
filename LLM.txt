@@ -1,0 +1,150 @@
+# WeavScope 🔭 — Comprehensive LLM.txt (v2)
+
+This document provides a exhaustive technical reference for **WeavScope**, a multi-tenant wrapper for Weaviate v4. It is designed for AI agents to understand every class, function, parameter, and edge case in the codebase.
+
+---
+
+## 1. Project structure & Modules
+
+- **`weavscope`**: Top-level package. Exports `WeavScope` and `WeaviateConfig`.
+- **`weavscope.config.settings`**: Defines the `WeaviateConfig` dataclass.
+- **`weavscope.core.store`**: The main `WeavScope` entry point and life-cycle manager.
+- **`weavscope.core.batch`**: High-level ingestion logic (`WeavScopeBatch`).
+- **`weavscope.core.query`**: High-level search and retrieval logic (`WeavScopeQuery`).
+- **`weavscope.core.providers`**: Mapping logic for vectorizer configurations.
+- **`weavscope.core.connection`**: Internal Weaviate client factory and auth header resolver.
+- **`weavscope.utils.uuid`**: Deterministic UUID (v5) generation.
+- **`weavscope.utils.exceptions`**: Custom exception hierarchy.
+
+---
+
+## 2. Configuration: `WeaviateConfig`
+
+A strict dataclass using `__post_init__` for validation.
+
+### Attributes
+- `WEAVIATE_HOST` (str): Hostname (e.g., `"localhost"`). **Required.**
+- `WEAVIATE_CLASS_NAME` (str): Weaviate collection name (PascalCase). **Required.**
+- `WEAVIATE_EMBEDDING_MODEL_PROVIDER` (str): One of: `openai, azure, cohere, google, gemini, huggingface, voyageai, mistral, jinaai, custom`. **Required.**
+- `WEAVIATE_EMBEDDING_MODEL_NAME` (str): Model identifier for the provider. **Required.**
+- `WEAVIATE_PORT` (int): REST port. **Default: 8080.** range 1–65535.
+- `WEAVIATE_GRPC_PORT` (int): gRPC port. **Default: 50051.** range 1–65535.
+- `WEAVIATE_USE_GRPC` (bool): If `False`, `ws.batch` falls back to sequential REST inserts. **Default: True.**
+- `WEAVIATE_API_KEY` (str): Weaviate cluster API key. **Default: "" (anonymous).**
+- `WEAVIATE_EMBEDDING_MODEL_API_KEY` (str): API key for the chosen provider. **Default: "".**
+
+---
+
+## 3. Main Interface: `WeavScope`
+
+Inherits from nothing. Composes `batch` and `query` modules.
+
+### Constructor & Lifecycle
+- `__init__(config: WeaviateConfig, tenant_id: str = None)`
+    - If `tenant_id` is provided, the instance enters "Auto-Tenant Mode".
+- `__enter__()`: If in Auto-Tenant Mode, calls `self.ensure_tenant(self.tenant_id)`.
+- `__exit__(...)`: If in Auto-Tenant Mode, calls `self.delete_tenant(self.tenant_id)` and then `self.close()`. Errors during deletion are logged but not raised.
+- `close()`: Closes the underlying `weaviate.WeaviateClient`. Called automatically by `__exit__`.
+
+### Methods
+- `ensure_collection(provider: str = "custom", model: str = "custom", extra_properties: List[Property] = None)`
+    - Idempotent: Skips if collection exists.
+    - Creates a multi-tenant collection with `tenant_id` and `object_id` as base properties.
+- `collection()`: Returns the raw `weaviate.Collection` object from the underlying client.
+- `delete_collection()`: **CAUTION.** Deletes entire collection and ALL tenants.
+- `ensure_tenant(tenant_id: str)`: Idempotent. Creates a tenant if missing.
+- `delete_tenant(tenant_id: str)`: Deletes a specific tenant and its data.
+- `delete_all_tenants()`: Cleans up every tenant in the collection without dropping the schema.
+- `list_tenants() -> List[str]`: Returns names of all active tenants.
+
+---
+
+## 4. Ingestion: `ws.batch` (`WeavScopeBatch`)
+
+Accessed via `weavscope_instance.batch`.
+
+### Methods
+- `add_objects(objects: List[Dict], tenant_id: str = None, id_field: str = None, vector: List[float] = None)`
+    - `objects`: List of property dicts.
+    - `tenant_id`: Overrides instance `tenant_id`. Required if instance has none.
+    - `id_field`: Property name used for deterministic UUID generation.
+    - `vector`: Optional pre-computed vector for *all* objects in this call (rarely used for bulk).
+    - **Logic**: Automatically calls `ensure_tenant()`. If `WEAVIATE_USE_GRPC` is `True`, uses dynamic gRPC batching. Otherwise, uses sequential REST inserts.
+- `add_object(...)`: Convenience wrapper for a single object.
+- `delete_objects_where(filter_property: str, filter_value: str, tenant_id: str = None)`
+    - Deletes objects in the specified tenant where `property == value`.
+
+---
+
+## 5. Search & Retrieval: `ws.query` (`WeavScopeQuery`)
+
+Accessed via `weavscope_instance.query`. All methods return a list of `dict` (serialized Weaviate objects).
+
+### Serialization Format
+```python
+{
+    "uuid": str,
+    "properties": dict,
+    "score": float | None,
+    "distance": float | None,
+    "certainty": float | None
+}
+```
+
+### Methods
+- `hybrid(query_text: str, tenant_id: str = None, limit: int = 10, alpha: float = 0.75, exclude_property: str = None, exclude_value: str = None, return_properties: List[str] = None)`
+    - Combines keyword and vector search. `alpha=1.0` is pure vector, `alpha=0.0` is pure keyword.
+- `near_text(query_text: str, tenant_id: str = None, limit: int = 10, certainty: float = None, distance: float = None, ...)`
+    - Semantic search using the provider's text2vec module.
+- `near_vector(vector: List[float], tenant_id: str = None, limit: int = 10, ...)`
+    - Vector search using a passed embedding.
+- `bm25(query_text: str, tenant_id: str = None, limit: int = 10, properties: List[str] = None, ...)`
+    - Keyword search. `properties` limits which fields are searched.
+- `fetch_all(tenant_id: str = None, limit: int = 100, ...)`
+    - Basic retrieval of objects.
+- `fetch_by_id(uuid: str, tenant_id: str = None)`
+    - Retrieves a single object by its UUID.
+
+---
+
+## 6. Internal Utilities
+
+### UUID Generation (`weavscope.utils.uuid`)
+- `generate_uuid(object_id: str, tenant_id: str) -> str`:
+    - Seed: `f"{tenant_id}:{object_id}"`
+    - Namespace: `uuid.NAMESPACE_OID`
+    - Algorithm: `uuid.uuid5`
+- `random_uuid() -> str`: Standard `uuid.uuid4`.
+
+### Provider Mapping (`weavscope.core.providers`)
+Maps input `provider` strings to Weaviate's `Configure.Vectors` methods:
+- `openai` -> `text2vec_openai`
+- `google/vertexai` -> `text2vec_palm` (legacy)
+- `gemini` -> `text2vec_google_gemini` (uses `RETRIEVAL_QUERY` task_type)
+- `azure` -> `text2vec_azure_openai` (model becomes `deployment_id`)
+- `custom` -> `None` (caller must provide vectors)
+
+---
+
+## 7. Exception Hierarchy
+
+All inherit from `WeavscopeError`.
+
+- `WeavscopeConnectionError`: Client fail to connect.
+- `WeavscopeConfigError`: Invalid config parameters.
+- `WeavscopeCollectionError`: Schema/Collection CRUD failure.
+- `WeavscopeTenantError`: Tenant management failure.
+- `WeavscopeBatchError`: Ingestion/Deletion failure.
+- `WeavscopeQueryError`: Search execution failure.
+
+---
+
+## 8. Common Connection Headers
+
+The library automatically injects the correct header based on `WEAVIATE_EMBEDDING_MODEL_PROVIDER`:
+- `openai`: `X-OpenAI-Api-Key`
+- `cohere`: `X-Cohere-Api-Key`
+- `google/gemini`: `X-Goog-Studio-Api-Key` AND `X-Goog-Api-Key`
+- `mistral`: `X-Mistral-Api-Key`
+- `azure`: `X-Azure-Api-Key`
+- etc.
