@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Post-init script for Python default template.
 
-Renames my_mcp_server / my-mcp-server to the actual project name
+Renames server / server to the actual project name
 derived from the target directory.
 
 Environment variables (set by mcpize init):
@@ -13,8 +13,8 @@ import os
 import shutil
 from pathlib import Path
 
-TEMPLATE_HYPHEN = "my-mcp-server"
-TEMPLATE_UNDERSCORE = "my_mcp_server"
+TEMPLATE_HYPHEN = "server"
+TEMPLATE_UNDERSCORE = "server"
 
 project_dir = Path(os.environ.get("MCPIZE_PROJECT_DIR", "."))
 project_name = os.environ.get("MCPIZE_PROJECT_NAME", TEMPLATE_HYPHEN)

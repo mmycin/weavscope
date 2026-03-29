@@ -27,7 +27,7 @@ format:
 	uv run ruff check --fix src tests
 
 run:
-	uv run my-mcp-server
+	uv run server
 
 clean:
 	rm -rf .venv .ruff_cache .pytest_cache __pycache__ src/**/__pycache__ tests/__pycache__

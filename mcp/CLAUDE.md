@@ -4,9 +4,9 @@ Python MCP server built with FastMCP 2.0 using src-layout.
 
 ## Renaming the Project
 
-The template uses `my_mcp_server` as the package name. To rename, update ALL of these:
+The template uses `server` as the package name. To rename, update ALL of these:
 
-1. `src/my_mcp_server/` → `src/your_name/` (directory)
+1. `src/server/` → `src/your_name/` (directory)
 2. `pyproject.toml` → name, `[project.scripts]` key+value, `[tool.hatch.build.targets.wheel]` packages
 3. `mcpize.yaml` → `entry: src/your_name/server.py` and `command: .venv/bin/python -m your_name.server`
 4. `Dockerfile` → `CMD [".venv/bin/python", "-m", "your_name.server"]`
@@ -20,7 +20,7 @@ Missing any of these causes broken imports or failed deploys.
 ## Project Structure
 
 ```
-├── src/my_mcp_server/
+├── src/server/
 │   ├── __init__.py     # Package version
 │   ├── tools.py        # Pure tool functions (testable)
 │   ├── server.py       # FastMCP app entry point
@@ -81,7 +81,7 @@ mcp.tool()(calculate)
 class TestCalculate:
     def test_add(self):
         assert calculate("2", "3") == {"result": "5"}
-    
+
     def test_subtract(self):
         assert calculate("5", "3", "subtract") == {"result": "2"}
 ```
@@ -123,7 +123,7 @@ mcp.resource("config://app")(get_config)
 
 ## Adding Prompts
 
-```python
+````python
 # tools.py
 def review_prompt(code: str, lang: str = "python") -> str:
     """Generate code review prompt."""
@@ -131,14 +131,14 @@ def review_prompt(code: str, lang: str = "python") -> str:
 
 # server.py
 mcp.prompt()(review_prompt)
-```
+````
 
 ## Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `8080` | Server port |
-| `LOG_LEVEL` | `INFO` | Logging level (DEBUG, INFO, WARNING, ERROR) |
+| Variable    | Default | Description                                 |
+| ----------- | ------- | ------------------------------------------- |
+| `PORT`      | `8080`  | Server port                                 |
+| `LOG_LEVEL` | `INFO`  | Logging level (DEBUG, INFO, WARNING, ERROR) |
 
 ## Testing
 

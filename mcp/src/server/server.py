@@ -121,7 +121,7 @@ class DevLoggingMiddleware(Middleware):
 # MCP Server Setup
 # ============================================================================
 
-mcp = FastMCP("my-mcp-server")
+mcp = FastMCP("server")
 
 # Add dev logging middleware
 mcp.add_middleware(DevLoggingMiddleware())

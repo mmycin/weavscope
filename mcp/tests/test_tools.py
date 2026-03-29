@@ -2,7 +2,7 @@
 
 import pytest
 
-from my_mcp_server.tools import delayed_echo, echo, hello
+from server.tools import delayed_echo, echo, hello
 
 
 class TestHello:

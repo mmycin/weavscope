@@ -1,4 +1,4 @@
-# my-mcp-server
+# server
 
 [![MCPize](https://mcpize.com/badge/@mcpize/mcpize?type=hosted)](https://mcpize.com)
 
@@ -20,23 +20,23 @@ Server runs at `http://localhost:8080/mcp`
 
 ## Rename Your Project
 
-Replace `my_mcp_server` / `my-mcp-server` with your project name in these files:
+Replace `server` / `server` with your project name in these files:
 
 ```bash
 # 1. Rename the package directory
-mv src/my_mcp_server src/your_project_name
+mv src/server src/your_project_name
 
 # 2. Update all references (replace your_project_name / your-project-name)
 ```
 
-| File | What to change |
-|------|---------------|
-| `pyproject.toml` | `name`, `[project.scripts]`, `[tool.hatch.build.targets.wheel]` |
-| `mcpize.yaml` | `entry` path, `startCommand.command` module path |
-| `Dockerfile` | `CMD` module path |
-| `Makefile` | `uv run` script name in `run` target |
-| `src/*/server.py` | `FastMCP("your-project-name")` |
-| `tests/test_tools.py` | `from your_project_name.tools import ...` |
+| File                  | What to change                                                  |
+| --------------------- | --------------------------------------------------------------- |
+| `pyproject.toml`      | `name`, `[project.scripts]`, `[tool.hatch.build.targets.wheel]` |
+| `mcpize.yaml`         | `entry` path, `startCommand.command` module path                |
+| `Dockerfile`          | `CMD` module path                                               |
+| `Makefile`            | `uv run` script name in `run` target                            |
+| `src/*/server.py`     | `FastMCP("your-project-name")`                                  |
+| `tests/test_tools.py` | `from your_project_name.tools import ...`                       |
 
 > **Important**: The directory name uses underscores (`your_project_name`), while the package name in pyproject.toml uses hyphens (`your-project-name`). Both `mcpize.yaml` entry and Dockerfile CMD must match the directory name.
 
@@ -50,10 +50,10 @@ make format     # Auto-format code
 
 ## Tools
 
-| Tool | Description |
-|------|-------------|
-| `hello` | Returns a greeting message |
-| `echo` | Echoes input with timestamp |
+| Tool           | Description                        |
+| -------------- | ---------------------------------- |
+| `hello`        | Returns a greeting message         |
+| `echo`         | Echoes input with timestamp        |
 | `delayed_echo` | Async echo with configurable delay |
 
 ## Testing
@@ -71,7 +71,7 @@ mcpize deploy
 ## Project Structure
 
 ```
-├── src/my_mcp_server/
+├── src/server/
 │   ├── __init__.py
 │   ├── server.py       # MCP server and tools
 │   └── py.typed        # PEP 561 marker

@@ -4,8 +4,8 @@
 Python MCP server for MCPize using FastMCP 2.0 with src-layout.
 
 ## Structure
-- src/my_mcp_server/tools.py: Pure tool functions (testable)
-- src/my_mcp_server/server.py: FastMCP app, registers tools
+- src/server/tools.py: Pure tool functions (testable)
+- src/server/server.py: FastMCP app, registers tools
 - tests/test_tools.py: Unit tests
 - tests/conftest.py: Pytest fixtures
 
