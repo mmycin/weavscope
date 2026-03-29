@@ -1,5 +1,8 @@
 # WeavScope 🔭
 
+![WeavScope Banner](assets/banner.jpg)
+
+
 A clean, multi-tenant wrapper for Weaviate.
 
 WeavScope simplifies working with isolated data in Weaviate by providing a context-managed "Scope" that automatically handles connection, tenant creation, and cleanup based on your configuration.
