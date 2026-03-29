@@ -9,8 +9,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-import weaviate.util
-
 from weavscope.utils.logging import get_logger
 from weavscope.utils.uuid import generate_uuid
 from weavscope.utils.exceptions import WeavscopeBatchError
