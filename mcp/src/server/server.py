@@ -7,13 +7,12 @@ import signal
 import time
 from os import getenv
 
-from fastmcp import FastMCP
 from fastmcp.server.middleware import Middleware, MiddlewareContext
 from rich.console import Console
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from .tools import delayed_echo, echo, hello
+from .tools import mcp
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
@@ -121,8 +120,6 @@ class DevLoggingMiddleware(Middleware):
 # MCP Server Setup
 # ============================================================================
 
-mcp = FastMCP("server")
-
 # Add dev logging middleware
 mcp.add_middleware(DevLoggingMiddleware())
 
@@ -132,24 +129,18 @@ async def health_check(request: Request) -> JSONResponse:
     return JSONResponse({"status": "healthy"})
 
 
-# Register tools
-mcp.tool()(hello)
-mcp.tool()(echo)
-mcp.tool()(delayed_echo)
-
-
 def main() -> None:
     """Run the MCP server with graceful shutdown."""
     port = int(getenv("PORT", "8080"))
 
     console.print()
-    console.print("[bold]MCP Server running on[/bold]", f"[cyan]http://localhost:{port}[/cyan]")
+    console.print("[bold]WeavScope MCP Docs Server running on[/bold]", f"[cyan]http://localhost:{port}[/cyan]")
     console.print(f"  [dim]Health:[/dim] http://localhost:{port}/health")
     console.print(f"  [dim]MCP:[/dim]    http://localhost:{port}/mcp")
 
     if IS_DEV:
         console.print()
-        console.print("[dim]" + "─" * 50 + "[/dim]")
+        console.print("[dim]" + "-" * 50 + "[/dim]")
         console.print()
 
     def handle_sigterm(*_):

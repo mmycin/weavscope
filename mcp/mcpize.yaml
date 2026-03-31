@@ -11,3 +11,6 @@ startCommand:
 
 configSchema:
     source: code
+
+name: weavscope-docs
+description: MCP documentation server for WeavScope - multi-tenant Weaviate wrapper package

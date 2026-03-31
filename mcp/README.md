@@ -1,8 +1,15 @@
-# server
+# WeavScope MCP Docs Server
 
 [![MCPize](https://mcpize.com/badge/@mcpize/mcpize?type=hosted)](https://mcpize.com)
 
-MCP server built with [FastMCP 2.0](https://gofastmcp.com) for [MCPize](https://mcpize.com).
+MCP documentation server built with [FastMCP 2.0](https://gofastmcp.com) for [WeavScope](https://github.com/mycin/weavscope) - a clean, multi-tenant wrapper for Weaviate.
+
+## Features
+
+- **Comprehensive Documentation**: Access complete WeavScope API reference, configuration guides, and examples
+- **Knowledge Base**: Structured documentation resources for all WeavScope components
+- **MCP Resources**: Direct access to documentation via MCP resource protocol
+- **Interactive Tools**: Query documentation and examples through MCP tools
 
 ## Requirements
 
@@ -18,27 +25,24 @@ make run        # Start server
 
 Server runs at `http://localhost:8080/mcp`
 
-## Rename Your Project
+## Available Tools
 
-Replace `server` / `server` with your project name in these files:
+| Tool | Description |
+|------|-------------|
+| `get_weavscope_documentation` | Get comprehensive WeavScope documentation |
+| `get_weavscope_examples` | Get usage examples |
+| `get_api_reference` | Get detailed API reference |
+| `get_configuration_guide` | Get configuration guide |
 
-```bash
-# 1. Rename the package directory
-mv src/server src/your_project_name
+## Available Resources
 
-# 2. Update all references (replace your_project_name / your-project-name)
-```
-
-| File                  | What to change                                                  |
-| --------------------- | --------------------------------------------------------------- |
-| `pyproject.toml`      | `name`, `[project.scripts]`, `[tool.hatch.build.targets.wheel]` |
-| `mcpize.yaml`         | `entry` path, `startCommand.command` module path                |
-| `Dockerfile`          | `CMD` module path                                               |
-| `Makefile`            | `uv run` script name in `run` target                            |
-| `src/*/server.py`     | `FastMCP("your-project-name")`                                  |
-| `tests/test_tools.py` | `from your_project_name.tools import ...`                       |
-
-> **Important**: The directory name uses underscores (`your_project_name`), while the package name in pyproject.toml uses hyphens (`your-project-name`). Both `mcpize.yaml` entry and Dockerfile CMD must match the directory name.
+| Resource | Description |
+|----------|-------------|
+| `weavscope://docs/overview` | WeavScope overview |
+| `weavscope://docs/getting-started` | Getting started guide |
+| `weavscope://docs/technical-reference` | Technical reference |
+| `weavscope://examples/basic-usage` | Basic usage example |
+| `weavscope://examples/advanced-search` | Advanced search examples |
 
 ## Development
 
@@ -47,14 +51,6 @@ make test       # Run tests
 make lint       # Check code style
 make format     # Auto-format code
 ```
-
-## Tools
-
-| Tool           | Description                        |
-| -------------- | ---------------------------------- |
-| `hello`        | Returns a greeting message         |
-| `echo`         | Echoes input with timestamp        |
-| `delayed_echo` | Async echo with configurable delay |
 
 ## Testing
 
@@ -71,10 +67,16 @@ mcpize deploy
 ## Project Structure
 
 ```
-├── src/server/
-│   ├── __init__.py
-│   ├── server.py       # MCP server and tools
-│   └── py.typed        # PEP 561 marker
+├── src/
+│   ├── server/
+│   │   ├── __init__.py
+│   │   ├── server.py       # MCP server entry point
+│   │   ├── tools.py        # MCP tools and resources
+│   │   └── py.typed        # PEP 561 marker
+│   └── knowledgebase/
+│       ├── __init__.py
+│       ├── resources.py    # Knowledge base implementation
+│       └── py.typed        # PEP 561 marker
 ├── tests/
 │   └── test_tools.py
 ├── pyproject.toml
