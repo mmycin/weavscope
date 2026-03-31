@@ -1,9 +1,9 @@
 [project]
 name = "weavscope"
-version = "0.1.0"
+version = "0.1.1"
 license = { text = "MIT" }
 description = "A clean, multi-tenant Weaviate wrapper for isolated data management."
-readme = "README.md"
+readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.11"
 authors = [
     { name = "Tahcin Ul Karim (Mycin)", email = "mycin.mit@gmail.com" }
